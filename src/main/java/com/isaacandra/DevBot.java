@@ -3,6 +3,7 @@ package com.isaacandra;
 import com.isaacandra.commands.config.ConfigMemberJoinCommand;
 import com.isaacandra.commands.config.ConfigMemberLeaveCommand;
 import com.isaacandra.commands.config.PingCommand;
+import com.isaacandra.commands.config.Roles;
 import com.isaacandra.commands.prefix.GetPrefixCommand;
 import com.isaacandra.commands.prefix.SetPrefixCommand;
 import com.isaacandra.events.MemberJoin;
@@ -37,7 +38,8 @@ public class DevBot {
                         new SetPrefixCommand(),
                         new GetPrefixCommand(),
                         new ConfigMemberJoinCommand(),
-                        new ConfigMemberLeaveCommand()
+                        new ConfigMemberLeaveCommand(),
+                        new Roles()
                 )
                 .build();
 

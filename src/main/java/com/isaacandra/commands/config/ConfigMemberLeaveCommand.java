@@ -18,7 +18,11 @@ public class ConfigMemberLeaveCommand extends ListenerAdapter {
         String prefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
 
         if (command.equalsIgnoreCase(prefix + "setChannelLeave")) {
-            if (event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+            if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+                event.getChannel().sendMessage(event.getMember().getAsMention() +
+                        " Você não possui permissão para usar esse comando!"
+                );
+            }
                 if (args.length == 2) {
                     try {
                         long channelId = Long.parseLong(args[1]);
@@ -29,7 +33,7 @@ public class ConfigMemberLeaveCommand extends ListenerAdapter {
                         event.getChannel().sendMessage("ID inválido fornecido.").queue();
                     }
                 }
-            }
+
         }
     }
 }

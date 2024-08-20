@@ -18,13 +18,17 @@ public class ConfigMemberJoinCommand extends ListenerAdapter {
 
 
         if (command.equalsIgnoreCase(prefix + "setChannelWelcome")) {
-            if (event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+            if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+                event.getChannel().sendMessage(event.getMember().getAsMention() +
+                        " Você não possui permissão para usar esse comando!"
+                );
+            }
                 if (args.length == 3) {
                     try {
                         long channelId = Long.parseLong(args[1]);
                         long stickerId = Long.parseLong(args[2]);
 
-                        DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, stickerId);
+                        DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, stickerId,  null);
                         event.getChannel().sendMessage("Configuração atualizada com sucesso!").queue();
                     } catch (NumberFormatException e) {
                         event.getChannel().sendMessage("IDs inválidos fornecidos.").queue();
@@ -37,7 +41,6 @@ public class ConfigMemberJoinCommand extends ListenerAdapter {
                                             + "<channelId> <stickerId>")
                             .queue();
                 }
-            } else {event.getChannel().sendMessage("Você não tem permissão para usar esse comando").queue();}
         }
     }
 }
