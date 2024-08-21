@@ -6,11 +6,8 @@ import com.isaacandra.commands.config.PingCommand;
 import com.isaacandra.commands.config.Roles;
 import com.isaacandra.commands.prefix.GetPrefixCommand;
 import com.isaacandra.commands.prefix.SetPrefixCommand;
-import com.isaacandra.events.MemberJoin;
-import com.isaacandra.events.MemberLeave;
+import com.isaacandra.events.*;
 import com.isaacandra.interactions.EchoCommandInteraction;
-import com.isaacandra.events.MessageEventListener;
-import com.isaacandra.events.ReadyEventListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -20,7 +17,7 @@ public class DevBot {
 
     public static JDA jda;
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         JDABuilder api = JDABuilder.createDefault(System.getenv("BOT_TOKEN"));
         jda = api
                 .enableIntents(
@@ -30,7 +27,6 @@ public class DevBot {
                 )
                 .addEventListeners(
                         new ReadyEventListener(),
-                        new MessageEventListener(),
                         new EchoCommandInteraction(),
                         new MemberJoin(),
                         new MemberLeave(),
@@ -39,11 +35,14 @@ public class DevBot {
                         new GetPrefixCommand(),
                         new ConfigMemberJoinCommand(),
                         new ConfigMemberLeaveCommand(),
-                        new Roles()
+                        new Roles(),
+                        new GuildJoin()
                 )
                 .build();
 
         RegisterCommands.registerCommands(jda);
+
+        GuildJoin.setActivity(jda);
 
     }
 }
