@@ -12,7 +12,10 @@ public class DataBaseConfigMemberJoinCommand {
             String sql = """
                     INSERT INTO member_join_config (guild_id, channel_id, sticker_id, auto_role) VALUES (?, ?, ?, ?)
                     ON CONFLICT (guild_id) DO UPDATE SET channel_id = EXCLUDED.channel_id, sticker_id = EXCLUDED.sticker_id,
-                    auto_role = EXCLUDED.auto_role
+                    auto_role = CASE
+                        WHEN EXCLUDED.auto_role IS NOT NULL THEN EXCLUDED.auto_role
+                        ELSE member_join_config.auto_role
+                    END
                     """;
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setLong(1, guildId);
@@ -27,7 +30,11 @@ public class DataBaseConfigMemberJoinCommand {
             } else {
                 statement.setNull(3, java.sql.Types.BIGINT);
             }
-            statement.setLong(4, autoRole);
+            if (autoRole != null) {
+                statement.setLong(4, autoRole);
+            } else {
+                statement.setNull(4, java.sql.Types.BIGINT);
+            }
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
