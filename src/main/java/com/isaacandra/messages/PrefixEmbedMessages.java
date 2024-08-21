@@ -1,5 +1,6 @@
 package com.isaacandra.messages;
 
+import com.isaacandra.utils.RegexUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -9,7 +10,7 @@ import java.awt.*;
 public class PrefixEmbedMessages {
 
     public EmbedBuilder embedBuilder = new EmbedBuilder();
-
+    RegexUtils regexUtils = new RegexUtils();
     public MessageEmbed embedGetPrefixMessage(Member author, String currentPrefix, String guildImageUrl) {
 
         embedBuilder
@@ -39,7 +40,8 @@ public class PrefixEmbedMessages {
                 .setAuthor(author.getUser().getEffectiveName(), author.getAvatarUrl(), author.getUser().getAvatarUrl())
                 .setThumbnail(guildImageUrl)
                 .setTitle("ERRO")
-                .setDescription("Por favor, forneça um prefixo! Exemplo: !setPrefix $")
+                .setDescription("Por favor, forneça um prefixo válido! Exemplo: !setPrefix $")
+                .setFooter("Prefixos válidos: " + regexUtils.getSpecialCharacteresRegex())
                 .setColor(Color.RED);
 
         return embedBuilder.build();
