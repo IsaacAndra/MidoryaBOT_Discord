@@ -21,7 +21,8 @@ public class ConfigMemberLeaveCommand extends ListenerAdapter {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"
-                );
+                ).queue();
+                return;
             }
                 if (args.length == 2) {
                     try {
