@@ -41,8 +41,8 @@ public class RolesEmbedMessages {
                 .setTitle("Erro")
                 .setDescription("""
                     Nenhum cargo gerenciável foi encontrada.\n
-                    Verifique se você selecionou o número correspondente aos cargos disponíveis!\n
-                    Verifique se o cargo do bot está acima dos cargos que você deseja gerenciar.
+                    O cargo do bot DEVE ficar acima dos cargos que você deseja gerenciar.\n
+                    Verifique se você selecionou o número correspondente aos cargos disponíveis!
                     """)
                 .setColor(Color.RED);
 

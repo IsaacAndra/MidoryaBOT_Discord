@@ -71,6 +71,15 @@ public class Roles extends ListenerAdapter {
 
 
             if (stringBuilder.length() == 0) {
+                event
+                        .getChannel()
+                        .sendMessage("")
+                        .setEmbeds(
+                                rolesEmbedMessages.embedRoleErrorMessage(
+                                        event.getMember(), event.getGuild().getIconUrl()
+                                )
+                        )
+                        .queue();
                 return;
             }
 
