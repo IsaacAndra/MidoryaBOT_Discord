@@ -2,14 +2,20 @@ package com.isaacandra.commands.config;
 
 import com.isaacandra.database.DataBaseConfigMemberJoinCommand;
 import com.isaacandra.database.DataBaseConfigPrefixCommands;
+import com.isaacandra.messages.RolesEmbedMessages;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Roles extends ListenerAdapter {
 
@@ -17,12 +23,18 @@ public class Roles extends ListenerAdapter {
     private final Map<String, Map<Byte, String>> guildRolesMapMap = new HashMap<>();
     private final Map<String, Boolean> isEditingAutoRole = new HashMap<>();
     private final Map<String, Member> memberEditingAutoRoleMap = new HashMap<>();
+    private final RolesEmbedMessages rolesEmbedMessages = new RolesEmbedMessages();
+    private final Map<String, ScheduledExecutorService> timers = new HashMap<>();
+    private final Map<String, Byte> roleSelectionTimeouts = new HashMap<>();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         super.onMessageReceived(event);
 
         byte roleIndexes = 0;
+        StringBuilder stringBuilder = new StringBuilder();
 
         String[] args = event.getMessage().getContentRaw().split(" ");
         String gId = event.getGuild().getId();
@@ -31,60 +43,114 @@ public class Roles extends ListenerAdapter {
         long guildId = event.getGuild().getIdLong();
         String prefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
 
+
         if (args[0].equalsIgnoreCase(prefix + "autoRole")) {
-            if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+            if (!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"
-                );
+                ).queue();
+                return;
             }
 
-            StringBuilder stringBuilder = new StringBuilder();
             for (Role role : event.getGuild().getRoles()) {
-                if (!role.isPublicRole()) {
 
-                    rolesMap.put(roleIndexes, role.getId());
+                if (!role.isPublicRole() && role.getPosition() < event.getGuild().getBotRole().getPosition()) {
+                    System.out.println("Role: " + role.getName() + " - ID: " + role.getId() + " - Position: " + role.getPosition());
+
 
                     stringBuilder
                             .append(roleIndexes)
                             .append(" - ")
-                            .append(role.getName()).append("\n");
+                            .append(role.getName())
+                            .append("\n");
 
+                    rolesMap.put(roleIndexes, role.getId());
                     roleIndexes++;
                 }
-
             }
+
+
+            if (stringBuilder.length() == 0) {
+                return;
+            }
+
+            event.getChannel().sendMessage("")
+                    .setEmbeds(rolesEmbedMessages
+                            .embedRoleSelectionMessage(
+                                    event.getMember(), stringBuilder.toString(),
+                                    event.getGuild().getIconUrl()
+                            )
+                    )
+                    .queue();
+
 
             guildRolesMapMap.put(gId, rolesMap);
             isEditingAutoRole.put(gId, true);
             memberEditingAutoRoleMap.put(gId, event.getMember());
 
-            event.getChannel().sendMessage(stringBuilder).queue();
+            ScheduledExecutorService timer = Executors.newScheduledThreadPool(1);
+            timer.schedule(() -> {
+                if (isEditingAutoRole.getOrDefault(gId, false)) {
+                    event.getChannel().sendMessage("")
+                            .setEmbeds(rolesEmbedMessages
+                                    .embedRoleTimerMessage(
+                                            event.getMember(), event.getGuild().getIconUrl()
+                                    )
+                            )
+                            .queue();
+                    isEditingAutoRole.put(gId, false);
+                }
+            }, 10, TimeUnit.SECONDS);
 
-        } else if (args[0].matches("^[0-9]{1,3}$") &&
-                isEditingAutoRole.get(gId)) {
+            timers.put(gId, timer);
 
-            if (!event.getMember().equals(memberEditingAutoRoleMap.get(gId)) ||
+
+        } else if (args[0].matches("^[0-9]{1,3}+$") &&
+                isEditingAutoRole.getOrDefault(gId, false)) {
+
+            if (!Objects.equals(event.getMember(), memberEditingAutoRoleMap.get(gId)) ||
                     event.getAuthor().isBot() ||
-                    guildRolesMapMap.get(gId) == null) {
+                    guildRolesMapMap.get(gId) == null ||
+                    Byte.parseByte(args[0]) >= guildRolesMapMap.get(gId).size()
+            ) {
+
+                event
+                        .getChannel()
+                        .sendMessage("")
+                        .setEmbeds(
+                                rolesEmbedMessages.embedRoleErrorMessage(
+                                        event.getMember(), event.getGuild().getIconUrl()
+                                )
+                        )
+                        .queue();
                 return;
             }
 
             String selectedRoleId = guildRolesMapMap.get(gId).get(Byte.parseByte(args[0]));
             Role selectedRole = event.getGuild().getRoleById(selectedRoleId);
+            RolesEmbedMessages rolesEmbedMessages = new RolesEmbedMessages();
 
-            event.getChannel().sendMessage("O cargo selecionado foi " +
-                    selectedRole.getName()).queue();
+            event.getChannel().sendMessage("").setEmbeds(rolesEmbedMessages
+                    .embedRoleSelectedMessage(
+                            event.getMember(), selectedRole.getName(), event.getGuild().getIconUrl())).queue();
 
             long[] config = DataBaseConfigMemberJoinCommand.getConfig(guildId);
             long channelId = config[0];
             long stickerId = config[1];
+            long autoRole = Long.valueOf(selectedRoleId);
 
             if (channelId != 0 && stickerId != 0) { // Verifica se os valores não são zero
-                DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, stickerId, Long.valueOf(selectedRoleId));
+                DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, stickerId, autoRole);
                 isEditingAutoRole.put(gId, false);
             } else {
                 event.getChannel().sendMessage("Configuração falhou: channelId ou stickerId está faltando.").queue();
             }
+            // Cancela o timer quando a role é selecionada
+            ScheduledExecutorService timer = timers.get(gId);
+            if (timer != null) {
+                timer.shutdown();
+            }
+
         }
     }
 }

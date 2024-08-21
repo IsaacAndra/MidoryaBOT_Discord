@@ -1,6 +1,7 @@
 package com.isaacandra.commands.prefix;
 
 import com.isaacandra.database.DataBaseConfigPrefixCommands;
+import com.isaacandra.messages.PrefixEmbedMessages;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -16,13 +17,16 @@ public class GetPrefixCommand extends ListenerAdapter {
         String[] args = message.split(" ", 2);
 
         // Comando para obter o prefixo atual
-        if (args[0].equalsIgnoreCase( "currentPrefix")) {
-            if (event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
-                String currentPrefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
-                event.getChannel().sendMessage("O prefixo atual é: " + currentPrefix).queue();
-            } else {
-                event.getChannel().sendMessage("Você não tem permissão para usar esse comando").queue();
+        if (args[0].equalsIgnoreCase("currentPrefix")) {
+            if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+                event.getChannel().sendMessage(event.getMember().getAsMention() +
+                        " Você não possui permissão para usar esse comando!"
+                ).queue();
+                return;
             }
+            String currentPrefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
+            PrefixEmbedMessages embedMessage = new PrefixEmbedMessages();
+            event.getChannel().sendMessage("").setEmbeds(embedMessage.embedGetPrefixMessage(event.getMember(), currentPrefix, event.getGuild().getIconUrl())).queue();
         }
     }
 }
