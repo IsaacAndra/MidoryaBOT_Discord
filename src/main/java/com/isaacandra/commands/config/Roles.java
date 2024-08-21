@@ -25,8 +25,6 @@ public class Roles extends ListenerAdapter {
     private final Map<String, Member> memberEditingAutoRoleMap = new HashMap<>();
     private final RolesEmbedMessages rolesEmbedMessages = new RolesEmbedMessages();
     private final Map<String, ScheduledExecutorService> timers = new HashMap<>();
-    private final Map<String, Byte> roleSelectionTimeouts = new HashMap<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 
     @Override
@@ -145,11 +143,10 @@ public class Roles extends ListenerAdapter {
 
             long[] config = DataBaseConfigMemberJoinCommand.getConfig(guildId);
             long channelId = config[0];
-            long stickerId = config[1];
             long autoRole = Long.valueOf(selectedRoleId);
 
-            if (channelId != 0 && stickerId != 0) { // Verifica se os valores não são zero
-                DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, stickerId, autoRole);
+            if (channelId != 0) { // Verifica se os valores não são zero
+                DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, autoRole);
                 isEditingAutoRole.put(gId, false);
             } else {
                 event.getChannel().sendMessage("Configuração falhou: channelId ou stickerId está faltando.").queue();
