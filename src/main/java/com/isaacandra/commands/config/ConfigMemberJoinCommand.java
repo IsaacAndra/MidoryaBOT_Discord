@@ -24,12 +24,11 @@ public class ConfigMemberJoinCommand extends ListenerAdapter {
                 ).queue();
                 return;
             }
-                if (args.length == 3) {
+                if (args.length == 2) {
                     try {
                         long channelId = Long.parseLong(args[1]);
-                        long stickerId = Long.parseLong(args[2]);
 
-                        DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, stickerId,  null);
+                        DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, null);
                         event.getChannel().sendMessage("Configuração atualizada com sucesso!").queue();
                     } catch (NumberFormatException e) {
                         event.getChannel().sendMessage("IDs inválidos fornecidos.").queue();

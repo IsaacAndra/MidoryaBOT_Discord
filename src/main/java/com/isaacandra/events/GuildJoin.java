@@ -5,25 +5,14 @@ import com.isaacandra.database.DataBaseConfigMemberLeaveCommand;
 import com.isaacandra.database.DataBaseConfigPrefixCommands;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.nio.channels.Channel;
-import java.sql.SQLException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import static com.isaacandra.DevBot.jda;
 
 public class GuildJoin extends ListenerAdapter {
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
@@ -32,13 +21,12 @@ public class GuildJoin extends ListenerAdapter {
         long guildId = event.getGuild().getIdLong();
         String defaultPrefix = "!";
         long channelId = event.getGuild().getDefaultChannel().getIdLong();
-        long defaultStickerId = 749054660769218631L;
         long defaultRole = 0L;
 
         TextChannel defaultChannel = (TextChannel) event.getGuild().getDefaultChannel();
 
         DataBaseConfigPrefixCommands.setPrefix(guildId, defaultPrefix);
-        DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, defaultStickerId, defaultRole);
+        DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, defaultRole);
         DataBaseConfigMemberLeaveCommand.setConfig(guildId, channelId);
 
 

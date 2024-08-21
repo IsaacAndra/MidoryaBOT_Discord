@@ -16,23 +16,21 @@ public class MemberJoin extends ListenerAdapter {
         long[] config = DataBaseConfigMemberJoinCommand.getConfig(guildId);
 
         long channelId = config[0]; // ID do canal
-        long stickerId = config[1]; // ID do sticker
-        long autoRole = config[2]; // ID da Role
+        long autoRole = config[1]; // ID da Role
 
         Member joined = event.getMember();
 
         MessageChannel channel = event.getGuild().getTextChannelById(channelId);
 
-        if (channel != null && stickerId != 0 && autoRole != 0) {
+        if (channel != null && autoRole != 0) {
             String welcomeMessage = "Seja bem-vindo ao Servidor, " + event.getUser().getAsMention() + "!";
             channel.sendMessage(welcomeMessage)
-                    .setStickers(StickerSnowflake.fromId(stickerId))
                     .queue();
             event.getGuild()
                     .addRoleToMember(UserSnowflake.fromId(joined.getId()),
                             event.getGuild().getRoleById(autoRole)).queue();
         } else {
-            System.out.println("Canal ou sticker não configurados corretamente.");
+            System.out.println("Canal não configurados corretamente.");
         }
     }
 
