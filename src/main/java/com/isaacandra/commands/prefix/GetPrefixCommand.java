@@ -17,7 +17,7 @@ public class GetPrefixCommand extends ListenerAdapter {
         String[] args = message.split(" ", 2);
 
         // Comando para obter o prefixo atual
-        if (args[0].equalsIgnoreCase("currentPrefix")) {
+        if (args[0].equalsIgnoreCase("Prefix")) {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"

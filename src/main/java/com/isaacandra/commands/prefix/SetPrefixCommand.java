@@ -2,11 +2,14 @@ package com.isaacandra.commands.prefix;
 
 import com.isaacandra.database.DataBaseConfigPrefixCommands;
 import com.isaacandra.messages.PrefixEmbedMessages;
+import com.isaacandra.utils.RegexUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class SetPrefixCommand extends ListenerAdapter {
+
+    RegexUtils regexUtils = new RegexUtils();
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -15,17 +18,17 @@ public class SetPrefixCommand extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
         long guildId = event.getGuild().getIdLong();
-        String settings = DataBaseConfigPrefixCommands.getPrefix(guildId);
+        String prefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
         PrefixEmbedMessages embedMessage = new PrefixEmbedMessages();
 
-        if (args[0].equalsIgnoreCase(settings + "setPrefix")) {
+        if (args[0].equalsIgnoreCase(prefix + "setPrefix")) {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"
                 ).queue();
                 return;
             }
-            if (args.length < 2) {  // Verifica se há um argumento adicional para o novo prefixo
+            if (args.length != 2 || !args[1].matches(regexUtils.getSpecialCharacteresRegex())) {  // Verifica se há um argumento adicional para o novo prefixo
                 event.getChannel()
                         .sendMessage("")
                         .setEmbeds(
