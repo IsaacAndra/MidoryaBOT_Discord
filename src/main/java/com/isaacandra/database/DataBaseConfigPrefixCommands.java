@@ -20,6 +20,7 @@ public class DataBaseConfigPrefixCommands {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     public static String getPrefix(long guildId) {
