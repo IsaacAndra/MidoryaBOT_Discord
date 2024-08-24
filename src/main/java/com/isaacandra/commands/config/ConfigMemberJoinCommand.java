@@ -35,10 +35,10 @@ public class ConfigMemberJoinCommand extends ListenerAdapter {
                     }
                 } else {
                     event.getChannel().sendMessage(
-                                    "Uso incorreto.\n Use: \n"
+                                    "Uso incorreto ou ID inválido.\n Use: \n"
                                             + prefix
-                                            + "setChannelWelcome "
-                                            + "<channelId> <stickerId>")
+                                            + "setchannelwelcome "
+                                            + "<channelId>")
                             .queue();
                 }
         }

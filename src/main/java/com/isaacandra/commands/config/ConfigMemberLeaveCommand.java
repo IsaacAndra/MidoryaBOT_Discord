@@ -34,7 +34,6 @@ public class ConfigMemberLeaveCommand extends ListenerAdapter {
                         event.getChannel().sendMessage("ID inválido fornecido.").queue();
                     }
                 }
-
         }
     }
 }

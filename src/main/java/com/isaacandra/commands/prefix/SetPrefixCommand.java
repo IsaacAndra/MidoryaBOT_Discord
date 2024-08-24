@@ -6,13 +6,14 @@ import com.isaacandra.utils.RegexUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 public class SetPrefixCommand extends ListenerAdapter {
 
     RegexUtils regexUtils = new RegexUtils();
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         super.onMessageReceived(event);
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");

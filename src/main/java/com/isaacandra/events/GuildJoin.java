@@ -4,11 +4,13 @@ import com.isaacandra.database.DataBaseConfigMemberJoinCommand;
 import com.isaacandra.database.DataBaseConfigMemberLeaveCommand;
 import com.isaacandra.database.DataBaseConfigPrefixCommands;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 
 public class GuildJoin extends ListenerAdapter {
@@ -24,23 +26,25 @@ public class GuildJoin extends ListenerAdapter {
         long defaultRole = 0L;
 
         TextChannel defaultChannel = (TextChannel) event.getGuild().getDefaultChannel();
+        String guildName = event.getGuild().getName();
 
         DataBaseConfigPrefixCommands.setPrefix(guildId, defaultPrefix);
         DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, defaultRole);
         DataBaseConfigMemberLeaveCommand.setConfig(guildId, channelId);
 
-
-        if (defaultChannel != null) {
-            defaultChannel.sendMessage(
-                    "Obrigado por adicionar o bot ao servidor! O prefixo padrão para executar um comando é `" +
-                            defaultPrefix +
-                            "`." +
-                            " Você pode alterá-lo usando o comando `!setPrefix <caractere>`.").queue();
-        }
-
         DataBaseConfigPrefixCommands.getPrefix(guildId);
         DataBaseConfigMemberJoinCommand.getConfig(guildId);
         DataBaseConfigMemberLeaveCommand.getConfig(guildId);
+
+        if (defaultChannel != null) {
+            defaultChannel.sendMessage(
+                    "Obrigado por me adicionar ao servidor " +
+                            guildName + "! :star_struck:\n" +
+                            "O prefixo padrão para executar um comando é `" +
+                            defaultPrefix +
+                            "`.\n" +
+                            "Você pode alterá-lo usando o comando `!setprefix <caractere>`.").queueAfter(2500, TimeUnit.MILLISECONDS);
+        }
 
         try {
             setActivity(event.getJDA());

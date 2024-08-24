@@ -2,7 +2,6 @@ package com.isaacandra.messages;
 
 import com.isaacandra.utils.RegexUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
