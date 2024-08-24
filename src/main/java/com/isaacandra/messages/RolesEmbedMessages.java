@@ -38,10 +38,10 @@ public class RolesEmbedMessages {
         embedBuilder
                 .setAuthor(author.getUser().getEffectiveName())
                 .setThumbnail(guildImageUrl)
-                .setTitle("Erro")
+                .setTitle("Erro: Verifique")
                 .setDescription("""
                     Nenhum cargo gerenciável foi encontrado.\n
-                    O cargo do bot DEVE ficar acima dos cargos que você deseja gerenciar.\n
+                    O cargo do bot `DEVE` ficar acima dos cargos que você deseja gerenciar. Veja as configurações do servidor!\n
                     Verifique se você selecionou o número correspondente aos cargos disponíveis!
                     """)
                 .setColor(Color.RED);
