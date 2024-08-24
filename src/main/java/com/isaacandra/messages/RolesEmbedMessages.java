@@ -40,7 +40,7 @@ public class RolesEmbedMessages {
                 .setThumbnail(guildImageUrl)
                 .setTitle("Erro")
                 .setDescription("""
-                    Nenhum cargo gerenciável foi encontrada.\n
+                    Nenhum cargo gerenciável foi encontrado.\n
                     O cargo do bot DEVE ficar acima dos cargos que você deseja gerenciar.\n
                     Verifique se você selecionou o número correspondente aos cargos disponíveis!
                     """)

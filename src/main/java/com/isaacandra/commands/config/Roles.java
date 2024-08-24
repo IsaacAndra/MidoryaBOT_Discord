@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -36,13 +37,15 @@ public class Roles extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split(" ");
         String gId = event.getGuild().getId();
+        List<Role> roles = event.getGuild().getRoles();
+        int roleBotPosition = event.getGuild().getBotRole().getPosition();
 
 
         long guildId = event.getGuild().getIdLong();
         String prefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
 
 
-        if (args[0].equalsIgnoreCase(prefix + "autoRole")) {
+        if (args[0].equals(prefix + "autorole")) {
             if (!Objects.requireNonNull(event.getMember()).hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"
@@ -50,11 +53,9 @@ public class Roles extends ListenerAdapter {
                 return;
             }
 
-            for (Role role : event.getGuild().getRoles()) {
-
-                if (!role.isPublicRole() && role.getPosition() < event.getGuild().getBotRole().getPosition()) {
+            for (Role role : roles) {
+                if (!role.isPublicRole() && role.getPosition() < roleBotPosition) {
                     System.out.println("Role: " + role.getName() + " - ID: " + role.getId() + " - Position: " + role.getPosition());
-
 
                     stringBuilder
                             .append(roleIndexes)
