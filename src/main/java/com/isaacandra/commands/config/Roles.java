@@ -55,7 +55,6 @@ public class Roles extends ListenerAdapter {
 
             for (Role role : roles) {
                 if (!role.isPublicRole() && role.getPosition() < roleBotPosition) {
-                    System.out.println("Role: " + role.getName() + " - ID: " + role.getId() + " - Position: " + role.getPosition());
 
                     stringBuilder
                             .append(roleIndexes)
@@ -146,12 +145,10 @@ public class Roles extends ListenerAdapter {
             long channelId = config[0];
             long autoRole = Long.valueOf(selectedRoleId);
 
-            if (channelId != 0) { // Verifica se os valores não são zero
-                DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, autoRole);
-                isEditingAutoRole.put(gId, false);
-            } else {
-                event.getChannel().sendMessage("Configuração falhou: channelId ou stickerId está faltando.").queue();
-            }
+
+            DataBaseConfigMemberJoinCommand.setConfig(guildId, channelId, autoRole);
+            isEditingAutoRole.put(gId, false);
+
             // Cancela o timer quando a role é selecionada
             ScheduledExecutorService timer = timers.get(gId);
             if (timer != null) {
