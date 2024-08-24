@@ -12,12 +12,14 @@ public class GetPrefixCommand extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         super.onMessageReceived(event);
 
-        String message = event.getMessage().getContentRaw();
+        String content = event.getMessage().getContentRaw();
         long guildId = event.getGuild().getIdLong();
-        String[] args = message.split(" ", 2);
+        String[] args = content.split(" ", 2);
+        String botMention = event.getJDA().getSelfUser().getAsMention();
+        boolean prefixString = args[0].equals("prefix");
 
         // Comando para obter o prefixo atual
-        if (args[0].equalsIgnoreCase("Prefix")) {
+        if (args.length > 0 && prefixString || content.startsWith(botMention)) {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"
@@ -27,6 +29,7 @@ public class GetPrefixCommand extends ListenerAdapter {
             String currentPrefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
             PrefixEmbedMessages embedMessage = new PrefixEmbedMessages();
             event.getChannel().sendMessage("").setEmbeds(embedMessage.embedGetPrefixMessage(event.getMember(), currentPrefix, event.getGuild().getIconUrl())).queue();
+
         }
     }
 }
