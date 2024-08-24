@@ -6,6 +6,9 @@ import com.isaacandra.commands.config.PingCommand;
 import com.isaacandra.commands.config.Roles;
 import com.isaacandra.commands.prefix.GetPrefixCommand;
 import com.isaacandra.commands.prefix.SetPrefixCommand;
+import com.isaacandra.database.DataBaseConfigMemberJoinCommand;
+import com.isaacandra.database.DataBaseConfigMemberLeaveCommand;
+import com.isaacandra.database.DataBaseConfigPrefixCommands;
 import com.isaacandra.events.*;
 import com.isaacandra.interactions.EchoCommandInteraction;
 import net.dv8tion.jda.api.JDA;
@@ -39,6 +42,10 @@ public class DevBot {
                         new GuildJoin()
                 )
                 .build();
+        DataBaseConfigPrefixCommands.initializePrefixDb();
+        DataBaseConfigMemberJoinCommand.initializeMemberJoinDb();
+        DataBaseConfigMemberLeaveCommand.initializeMemberLeaveDb();
+
 
         RegisterCommands.registerCommands(jda);
 

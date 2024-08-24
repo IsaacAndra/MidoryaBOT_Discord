@@ -1,11 +1,31 @@
 package com.isaacandra.database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DataBaseConfigMemberJoinCommand {
+
+    public static void initializeMemberJoinDb() {
+        try (Connection connection = DataBaseManager.connect()) {
+
+            String sql = """
+                    CREATE TABLE IF NOT EXISTS member_join_config (
+                        guild_id BIGINT PRIMARY KEY NOT NULL,
+                        channel_id BIGINT NOT NULL,
+                        auto_role TEXT 
+                    );
+                """;
+
+            Statement statement = connection.createStatement();
+            statement.execute(sql); // Cria a tabela member_join_config se ela não existir.
+
+            System.out.println("Tabela criada!");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
 
     public static void setConfig(Long guildId, Long channelId, Long autoRole) {
         try (Connection connection = DataBaseManager.connect()) {
