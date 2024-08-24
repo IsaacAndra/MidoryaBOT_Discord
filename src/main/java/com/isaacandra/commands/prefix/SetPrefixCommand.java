@@ -18,17 +18,23 @@ public class SetPrefixCommand extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
         long guildId = event.getGuild().getIdLong();
-        String prefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
+        String getPrefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
         PrefixEmbedMessages embedMessage = new PrefixEmbedMessages();
 
-        if (args[0].equals(prefix + "setprefix")) {
+
+        if (args[0].equals(getPrefix + "setprefix")) {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"
                 ).queue();
                 return;
             }
-            if (args.length != 2 || !args[1].matches(regexUtils.getSpecialCharacteresRegex())) {  // Verifica se há um argumento adicional para o novo prefixo
+
+            // Verifica se é um caractere válido e se é apenas 1 caractére
+            if (args.length != 2
+                    || !args[1].matches(regexUtils.getSpecialCharacteresRegex())
+                    || args[1].length() != 1)
+            {
                 event.getChannel()
                         .sendMessage("")
                         .setEmbeds(
@@ -43,6 +49,7 @@ public class SetPrefixCommand extends ListenerAdapter {
             String newPrefix = args[1];
 
             DataBaseConfigPrefixCommands.setPrefix(guildId, newPrefix);
+
             event.getChannel().sendMessage("")
                     .setEmbeds(embedMessage.embedSetPrefixMessage(event.getMember(), newPrefix, event.getGuild().getIconUrl()))
                     .queue();
