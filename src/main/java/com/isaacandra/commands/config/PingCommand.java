@@ -19,7 +19,7 @@ public class PingCommand extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
         String command = args[0].toLowerCase();
 
-        if (command.equalsIgnoreCase(prefix + "ping")) {
+        if (command.equals(prefix + "ping")) {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         "Você não tem permissão para usar esse comando!");

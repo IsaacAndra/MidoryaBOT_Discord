@@ -21,7 +21,7 @@ public class SetPrefixCommand extends ListenerAdapter {
         String prefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
         PrefixEmbedMessages embedMessage = new PrefixEmbedMessages();
 
-        if (args[0].equalsIgnoreCase(prefix + "setPrefix")) {
+        if (args[0].equals(prefix + "setprefix")) {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"

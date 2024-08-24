@@ -17,7 +17,7 @@ public class ConfigMemberLeaveCommand extends ListenerAdapter {
         long guildId = event.getGuild().getIdLong();
         String prefix = DataBaseConfigPrefixCommands.getPrefix(guildId);
 
-        if (command.equalsIgnoreCase(prefix + "setChannelLeave")) {
+        if (command.equals(prefix + "setchannelleave")) {
             if (!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
                 event.getChannel().sendMessage(event.getMember().getAsMention() +
                         " Você não possui permissão para usar esse comando!"
