@@ -17,7 +17,6 @@ public class DataBaseConfigMemberLeaveCommand {
             Statement statement = connection.createStatement();
             statement.execute(sql); // Cria a tabela member_join_config se ela não existir.
 
-            System.out.println("Tabela criada!");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
